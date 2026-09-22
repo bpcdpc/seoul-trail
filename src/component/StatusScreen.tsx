@@ -11,7 +11,7 @@ export default function StatusScreen({
 }: StatusScreenProps) {
   return (
     <div
-      className={`flex flex-col gap-4 items-center justify-center w-screen h-screen ${backgroundColor}`}
+      className={`flex flex-col gap-4 items-center justify-center w-screen h-dvh ${backgroundColor}`}
     >
       {message && <div>{message}</div>}
       {children ? children : ""}

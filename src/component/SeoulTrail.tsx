@@ -120,7 +120,7 @@ export default function SeoulTrail() {
   return (
     <TrailDispatchContext.Provider value={dispatchValue}>
       <TrailStateContext.Provider value={state}>
-        <div className="relative w-screen h-screen overflow-hidden">
+        <div className="relative w-screen h-dvh overflow-hidden">
           <Header />
           <SideBar />
           <MainMap />

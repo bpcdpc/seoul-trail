@@ -1,10 +1,19 @@
-import { COURSE_LEVELS } from "../data/mapConstants";
+import {
+  COURSE_LEVEL_BG_COLORS,
+  COURSE_LEVEL_TEXT_COLORS,
+} from "../data/mapConstants";
 import { TAILWIND_COLORS } from "../data/mapConstants";
 
-export function setLevelClassName(level: string): string {
-  const matched = COURSE_LEVELS.find(({ key }) => level.includes(key));
-  const levelClassName = matched ? matched.className : "";
-  return levelClassName;
+export function setLevelTextColor(level: string): string {
+  const matched = COURSE_LEVEL_TEXT_COLORS.find(({ key }) =>
+    level.includes(key),
+  );
+  return matched ? matched.colorName : "";
+}
+
+export function setLevelBgColor(level: string): string {
+  const matched = COURSE_LEVEL_BG_COLORS.find(({ key }) => level.includes(key));
+  return matched ? matched.colorName : "";
 }
 
 export function removeHtml(str: string): string {

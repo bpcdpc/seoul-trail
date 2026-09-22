@@ -6,11 +6,18 @@ export const SEOUL_CENTER: Position = {
   lng: 126.978,
 };
 
-// 코스 난이도
-export const COURSE_LEVELS = [
-  { key: "초급", className: "bg-green-600" },
-  { key: "중급", className: "bg-orange-400" },
-  { key: "상급", className: "bg-red-600" },
+// 코스 난이도별 글자 색상
+export const COURSE_LEVEL_TEXT_COLORS = [
+  { key: "초급", colorName: "text-green-600" },
+  { key: "중급", colorName: "text-orange-400" },
+  { key: "상급", colorName: "text-red-600" },
+];
+
+// 코스 난이도별 배경 색상
+export const COURSE_LEVEL_BG_COLORS = [
+  { key: "초급", colorName: "bg-green-600" },
+  { key: "중급", colorName: "bg-orange-400" },
+  { key: "상급", colorName: "bg-red-600" },
 ];
 
 // 카카오맵 지도 축척

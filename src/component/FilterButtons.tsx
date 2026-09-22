@@ -1,4 +1,4 @@
-import { COURSE_LEVELS } from "../data/mapConstants";
+import { COURSE_LEVEL_BG_COLORS } from "../data/mapConstants";
 
 type FilterButtonsProps = {
   onLevelChange: (levelName: string) => void;
@@ -15,10 +15,10 @@ export default function FilterButtons({ onLevelChange }: FilterButtonsProps) {
       >
         전체
       </button>
-      {COURSE_LEVELS.map((level) => (
+      {COURSE_LEVEL_BG_COLORS.map((level) => (
         <button
           key={level.key}
-          className={`flex h-6 w-10 text-xs items-center justify-center rounded-sm text-white shadow-md font-semibold transition-all ${level.className}`}
+          className={`flex h-6 w-10 text-xs items-center justify-center rounded-sm text-white shadow-md font-semibold transition-all ${level.colorName}`}
           onClick={() => {
             onLevelChange(level.key);
           }}

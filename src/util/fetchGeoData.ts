@@ -68,16 +68,56 @@ function getPositionByName(name: string): Promise<Position> {
 // 비동기 딜레이
 const delay = (ms: number) => new Promise((resolve) => setTimeout(resolve, ms));
 
+// 캐시 데이터 검증
+// JSON.parse 결과를 `as MergedItem[]` 로 단언하면 타입스크립트는 통과하지만
+// 실제 구조가 다를 때 마커 좌표가 조용히 비어버린다. 그래서 런타임에 확인한다.
+function isValidMergedItem(item: unknown): item is MergedItem {
+  if (typeof item !== "object" || item === null) return false;
+  const candidate = item as Partial<MergedItem>;
+  return (
+    typeof candidate.ROAD_NO === "number" &&
+    typeof candidate.position === "object" &&
+    candidate.position !== null &&
+    Number.isFinite(candidate.position.lat) &&
+    Number.isFinite(candidate.position.lng)
+  );
+}
+
+// 캐시 문자열을 파싱하고 검증한다. 하나라도 어긋나면 null 을 반환한다.
+function parseCache(raw: string): MergedItem[] | null {
+  try {
+    const parsed: unknown = JSON.parse(raw);
+    if (!Array.isArray(parsed) || parsed.length === 0) return null;
+    if (!parsed.every(isValidMergedItem)) return null;
+    return parsed;
+  } catch {
+    return null;
+  }
+}
+
 // 둘레길 상세 정보에 위도, 경도 주입
 export async function fetchMergedItems(): Promise<MergedItem[]> {
   // 캐시 설정
-  const CACHE_KEY = "seoul_trail_merged_items";
-  const cachedData = localStorage.getItem(CACHE_KEY);
+  // 캐시 데이터의 구조가 바뀌면 버전을 올린다.
+  // 예전 구조로 저장된 캐시는 아래 parseCache 검사에서도 걸러지지만,
+  // 버전을 올리면 키 자체가 달라지므로 검사 이전에 확실히 무시된다.
+  const CACHE_VERSION = "v2";
+  const CACHE_KEY = `seoul_trail_merged_items_${CACHE_VERSION}`;
+
+  // 버전 도입 이전 키가 남아 있으면 정리한다.
+  localStorage.removeItem("seoul_trail_merged_items");
 
   // 캐시가 존재한다면 캐시 데이터를 반환
+  const cachedData = localStorage.getItem(CACHE_KEY);
   if (cachedData) {
-    console.log("캐시 데이터가 존재하므로 캐시된 데이터를 불러옵니다.");
-    return JSON.parse(cachedData) as MergedItem[];
+    const parsed = parseCache(cachedData);
+    if (parsed) {
+      console.log("캐시 데이터가 존재하므로 캐시된 데이터를 불러옵니다.");
+      return parsed;
+    }
+    // 캐시가 깨졌거나 구조가 맞지 않으면 버리고 새로 받는다.
+    console.warn("캐시 데이터가 유효하지 않아 삭제하고 새로 가져옵니다.");
+    localStorage.removeItem(CACHE_KEY);
   }
 
   // 둘레길 상세 정보 가져오기
